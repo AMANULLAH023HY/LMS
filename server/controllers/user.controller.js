@@ -1,5 +1,5 @@
-import User from "../model/user.model";
-import AppErorr from "../utils/error.util";
+import User from "../model/user.model.js";
+import AppErorr from "../utils/error.util.js";
 
 const cookieOption = {
     maxAge: 7*24*60*60*1000, // 7 days
@@ -11,13 +11,13 @@ const register = async (req,res, next)=>{
     const [fullName, email, password] = req.body;
 
     if(!fullName || !email || !password){
-        return next(AppErorr("All field id required", 400));
+        return next(new AppErorr("All field id required", 400));
     }
 
     const userExists = await User.findOne({email});
 
     if(userExists){
-        return next(AppErorr("Email already exists", 400));
+        return next(new AppErorr("Email already exists", 400));
 
     }
 
@@ -32,7 +32,7 @@ const register = async (req,res, next)=>{
     });
 
     if(!user){
-        return next(AppErorr("User registration failed, please try again ", 400));
+        return next(new AppErorr("User registration failed, please try again ", 400));
 
 
     }
@@ -55,7 +55,35 @@ const register = async (req,res, next)=>{
 
 };
 
-const login = (req,res)=>{
+const login = async(req,res, next)=>{
+    
+    try {
+        cosnt [email, password] = req.body;
+
+            if(!email || !password){
+                return next(new AppErorr('All filed are required ', 400));
+            }
+            const user = await User.findOne({email}).select('+password');
+        
+            if(!user || !user.comparePassword(password)){
+                return next(new AppErorr('Email or Password does not match', 400));
+            }
+        
+            const token = await user.generateJWTToken();
+            user.password = undefined;
+        
+            res.cookie('token', token, cookieOption);
+        
+            res.status(200).json({
+                success:true,
+                message:"User loggedin successfully",
+                user,
+            });
+    } catch (e) {
+        return next(new AppErorr(e.message, 500));
+
+        
+    }
 
 };
 
