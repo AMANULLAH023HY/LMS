@@ -88,11 +88,37 @@ const login = async(req,res, next)=>{
 };
 
 const logout = (req,res)=>{
+res.cookie('token', null, {
+    secure:true,
+    maxAge:0,
+    httpOnly:true
+});
+res.status(200).json({
+    success:true,
+    message:"User logout successfully",
+});
+
 
 };
 
 
-const getProfile = (req,res)=>{
+const getProfile = async (req,res)=>{
+
+    try {
+        const userId = req.user.id;
+        const uder = await  User.findOne(userId);
+
+        res.status(200).json({
+            success:true,
+            messgae:"User details",
+            user,
+        })
+
+    } catch (e) {
+
+        return next(new AppErorr("Failed to fetch profile details", 500));
+        
+    }
 
 };
 
