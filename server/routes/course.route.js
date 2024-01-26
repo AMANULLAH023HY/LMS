@@ -9,6 +9,7 @@ import {
 } from "../controllers/course.controller.js";
 import {
   authorizedRoles,
+  authorizedSubscriber,
   isLonggedIn,
 } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
@@ -27,7 +28,7 @@ router
 
 router
   .route("/:id")
-  .get(isLonggedIn, getLectureByCourseId)
+  .get(isLonggedIn,authorizedSubscriber,getLectureByCourseId)
   .put(isLonggedIn, authorizedRoles("ADMIN"), updateCourse)
   .delete(isLonggedIn, authorizedRoles("ADMIN"), removeCourse)
   .post(
