@@ -16,6 +16,18 @@ const isLonggedIn = (req,res,next)=>{
     next();
 }
 
+
+
+const authorizedRoles = (...roles)=>async(req,res,next)=>{
+    const currentUserRole = req.user.role;
+  
+  if(!role.includes(currentUserRole )){
+    return next(new AppErorr('You do nat have permission to access this route ',500));
+  }
+  next();
+  }
+
 export{
-    isLonggedIn
+    isLonggedIn,
+    authorizedRoles
 }
