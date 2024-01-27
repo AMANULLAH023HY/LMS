@@ -1,11 +1,12 @@
 import React from 'react'
+
 import './App.css'
 
 function App() {
 
   return (
     <>
-     heloo
+     <h1 className='text-red-600'>heloo</h1> 
     </>
   )
 }
